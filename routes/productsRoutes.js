@@ -1,20 +1,17 @@
 const express = require('express')
 const routes = express.Router()
-const productsController = require('../controllers/productController')
+const ProductosService = require('../services/productService')
+const ProductosController = require('../controllers/productController')
 
-//Listar productos
-routes.get('/list-products',productsController.getProductos);
 
-//Listar Productos por Id
-routes.get('/list-product/:id',productsController.getProductosId);  
+const productsRoute = () =>{
 
-//Crear productos
-routes.post('/creat-products',productsController.createProducts);
+    const productosController = new ProductosController ( new ProductosService())
+    
+    routes.get('/list-product', productosController.getProductos);
+    routes.post('/creat-products', productosController.createProducts)
 
-//Actualizar producto
-routes.put('/update-product/:id',productsController.updateProducts);
+    return routes;
+}
 
-//Eliminar Producto
-routes.delete('/delete-product/:id', productsController.delectProduct);
-
-module.exports=routes;
+module.exports = productsRoute

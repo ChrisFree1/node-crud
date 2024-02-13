@@ -1,28 +1,17 @@
-const express = require('express')
-const app =  express()
-const db = require('./config/db')
-const productsRoutes = require('./routes/productsRoutes')
-const PORT = 8000
-const cors = require('cors')
+const express = require('express');
+const app = express();
+const db = require('./config/db');
+const productsRoute = require('./routes/productsRoutes');
+const PORT = 8000;
+const cors = require('cors');
 
-db.sync({alter : true}) // crear o actualizar las tablas si existe modificacion en alguna las realiza
-    .then( () => {
-        console.log('Conected to database')
-    })
-    .catch( (error ) => 
-        console.error('Error in the database ', error)
-    )
+app.use(cors());
+app.use(express.json());
 
-app.use(cors()) //Permitir que se pueda hacer peticiones HTTP
-app.use(express.json()) // req.body poder leerlos convertiendolos a objetos
+// Crear mis rutas
+app.use('/api', productsRoute()); // Invocar la función para obtener las rutas
 
-
-//Crear mis rutas
-app.use('/api',productsRoutes)
-
-
-//Iniciar el servidor   
-
+// Iniciar el servidor
 app.listen(PORT, () => {
-    console.log(`Server in the por http://localhost:${PORT}`);  
-})
+    console.log(`Server running at http://localhost:${PORT}`);
+});

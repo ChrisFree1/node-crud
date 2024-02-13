@@ -1,95 +1,42 @@
-const Products = require('../models/Product')
+module.exports= class ProductosController{
 
-
-const getProductos = async (req, res ) =>{
-
-    try {
-        const products = await Products.findAll();
-        res.json(products); 
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({error:'Error get products'})
-        
+    constructor(service){
+        this.service = service
     }
-};
+
+    getProductos= async (req,res) => {
 
 
-const createProducts = async (req, res) => {
-    const {name , price , description} = req.body;
+        try {
 
+            const reqData = req.body
+            console.log("dad")
+            const [status,data] = await this.service.getProductos(reqData)
 
-    try {
-        await Products.create({name , price , description});
-        res.status(200).json({sucess:'true'})
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, error: 'Error al crear el producto' });
-    }
-}
-
-
-const getProductosId = async (req, res) => {
-
-    try {
-        const idProducto = req.params.id;
-        const products = await Products.findAll({
-            where :{
-                id:idProducto
-            }
-        })
-        res.json(products)
-    } catch (error) {
-        // console.log(error)
-        res.status(500).json({ success: false, error: 'Error get products' });
+            res.status(status).json(data)
+        } catch (error) {
+            res.status(500).json({
+                message: 'Hubo un error al procesar la solicitud',
+                error: [error.message]
+            })
+            
+        }
 
     }
-}
 
-const updateProducts = async (req,res) => {
-    
-    const {name , price , description} = req.body;
+    createProducts = async (req,res) => {
 
-    
-    try {
-        const idProducto = req.params.id;
+        try {
+            const reqData = req.body
+            const [status, message] = await this.service.createProducts(reqData)
 
-        await Products.update({name:name, price:price, description:description},{
-            where:{
-                id:idProducto
-            }
-        });
-
-        res.json({sucess:true});
-
-    } catch (error) {
-
-        //console.log(error);
-        res.status(500).json({ success: false, error: 'Error update product' });
-        
+            res.status(status).json(message)
+        } catch (error) {
+            res.status(500).json({
+                message: 'Hubo un error al procesar la solicitud',
+                error: [error.message]
+            })
+            
+        }
     }
-}
-
-const delectProduct = async (req, res) => {
-
-    try {
-        const idProducto = req.params.id;
-        await Products.destroy({
-            where:{
-                id:idProducto
-            }
-        })
-        res.json({sucess:true})
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, error: 'Error delete products' });
-
-    }
-}
-
-module.exports={
-    getProductos,
-    createProducts,
-    getProductosId,
-    updateProducts,
-    delectProduct,
 }
